@@ -64,7 +64,13 @@ func signHost(ca tls.Certificate, hosts []string) (cert tls.Certificate, err err
 	for _, h := range hosts {
 		if ip := net.ParseIP(h); ip != nil {
 			template.IPAddresses = append(template.IPAddresses, ip)
+			if template.Subject.CommonName == "" {
+				template.Subject.CommonName = ip.String()
+			}
 		} else {
+			if template.Subject.CommonName == "" {
+				template.Subject.CommonName = h
+			}
 			template.DNSNames = append(template.DNSNames, h)
 		}
 	}
